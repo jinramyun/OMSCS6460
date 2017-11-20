@@ -1,33 +1,27 @@
 pragma solidity ^0.4.0;
 contract Degree {
 
-    struct Student {
-        bool registered;
-        address name;
-    }
-    struct Course {
-        address courseName;
-    }
+    address student;
+    mapping(bytes32 => uint8) courseGrades;
+    bytes32[] requiredCourses;
 
-    mapping(address => Course[]) coursesCompletedByStudent;
-    Course[] requiredCourses;
-
-    /// Create a new degree with $(_numCourses) required courses..
-    function Degree(uint8 _numCourses) public {
-        requiredCourses.length = _numCoursess;
+    /// Create a new degree requiring completion of $(_requiredCourses).
+    function Degree(bytes32[] _requiredCourses) public {
+        requiredCourses = _requiredCourses;
     }
 
-    /// Mark course $(toCourse) as completed.
-    function completeCourse(uint8 toCourse) public {
+    /// Record grade $(toGrade) for course $(toCourse).
+    function completeCourse(bytes32 toCourse,uint8 toGrade) public {
+        courseGrades[toCourse] = toGrade;
     }
 
     /// Check if all requirements for Degree have been met.
-    function completedDegree() public constant returns (uint8 _completedCourses) {
-        uint256 requiredCourseCount = 0;
-        for (uint8 prop = 0; prop < proposals.length; prop++)
-            if (_completedCourses > requiredCourseCount) {
-                winningVoteCount = proposals[prop].voteCount;
-                _winningProposal = prop;
+    function completedDegree() public constant returns (bool _completedDegree) {
+        for (uint8 prop = 0; prop < requiredCourses.length; prop++)
+            if (courseGrades[requiredCourses[prop]] < 64) {
+                return false;
             }
+        return true;
     }
+
 }
